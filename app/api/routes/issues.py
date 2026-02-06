@@ -103,8 +103,17 @@ def update_issue( query: str,db: Session = Depends(get_db)):
             )
 
         issue_data = json.loads(agent_response["tool_result"])
-
-        return issue_data
+        db_issue = db.query(Issue).filter(Issue.issue_id == issue_data["issue_id"]).first()
+        if not db_issue:
+            raise HTTPException(status_code=404, detail="Issue not found")
+        update_data = issue_data["updates"]
+        print(update_data)
+        for field, value in update_data.items():
+            setattr(db_issue, field, value)
+        db_issue.updated_at = datetime.utcnow()
+        db.commit()
+        db.refresh(db_issue)
+        return db_issue
     except json.JSONDecodeError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -113,7 +122,6 @@ def update_issue( query: str,db: Session = Depends(get_db)):
 
 
 
-    # db_issue = db.query(Issue).filter(Issue.issue_id == issue_id).first()
     # if not db_issue:
     #     raise HTTPException(status_code=404, detail="Issue not found")
     #

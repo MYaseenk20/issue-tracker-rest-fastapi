@@ -16,7 +16,7 @@ class AgentService:
 
     def _build_agent(self):
         llm = ChatOllama(
-            model="llama3.2:3b",
+            model="mistral:latest",
             temperature=0.1,
         )
 
