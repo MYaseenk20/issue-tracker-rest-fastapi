@@ -8,6 +8,7 @@ import json
 import uuid
 from datetime import datetime, timedelta
 import time
+from urllib.parse import quote
 
 # Page config
 st.set_page_config(
@@ -568,7 +569,7 @@ def show_chat_updater_page():
 
         with st.spinner("🤖 Processing command..."):
             # Process command
-            result = update_issue(user_input)
+            result = update_issue(quote(user_input))
 
             # if result['success']:
             #     response = result['message']
@@ -602,26 +603,26 @@ def show_chat_updater_page():
             with col1:
                 if st.button("✅ Mark Resolved", use_container_width=True):
                     command = f"Mark issue #{issue_id} as resolved"
-                    st.session_state.chat_history.append({'role': 'user', 'content': command})
+                    # st.session_state.chat_history.append({'role': 'user', 'content': command})
                     # result = process_chat_command(command)
-                    result = update_issue(user_input)
-                    st.session_state.chat_history.append({'role': 'assistant', 'content': result})
+                    result = update_issue(quote(command))
+                    # st.session_state.chat_history.append({'role': 'assistant', 'content': result})
                     st.rerun()
 
             with col2:
                 if st.button("🔼 Set High Priority", use_container_width=True):
                     command = f"Change priority of issue #{issue_id} to high"
                     st.session_state.chat_history.append({'role': 'user', 'content': command})
-                    result = update_issue(command)
-                    st.session_state.chat_history.append({'role': 'assistant', 'content': result['message']})
+                    result = update_issue(quote(command))
+                    # st.session_state.chat_history.append({'role': 'assistant', 'content': result})
                     st.rerun()
 
             with col3:
                 if st.button("🚫 Close Issue", use_container_width=True):
                     command = f"Close issue #{issue_id}"
                     st.session_state.chat_history.append({'role': 'user', 'content': command})
-                    result = update_issue(command)
-                    st.session_state.chat_history.append({'role': 'assistant', 'content': result['message']})
+                    result = update_issue(quote(command))
+                    # st.session_state.chat_history.append({'role': 'assistant', 'content': result})
                     st.rerun()
     else:
         st.info("No open issues to update!")
